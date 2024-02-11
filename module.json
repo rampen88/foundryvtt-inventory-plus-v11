@@ -94,6 +94,8 @@
     "verified": 11
   },
   "url": "https://github.com/rampen88/foundryvtt-inventory-plus-v11",
+  "manifest": "https://github.com/rampen88/foundryvtt-inventory-plus-v11/releases/download/latest/module.json",
+  "download": "https://github.com/rampen88/foundryvtt-inventory-plus-v11/releases/download/latest/module.zip",
   "allowBugReporter": true,
   "relationships": {
     "systems": [
