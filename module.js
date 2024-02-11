@@ -12,7 +12,7 @@
 // Import JavaScript modules
 
 // Import TypeScript modules
-import API from "./scripts/api.js";
+//import API from "./scripts/api.js";
 import CONSTANTS from "./scripts/constants.js";
 import { error } from "./scripts/lib/lib.js";
 import { initHooks, readyHooks, setupHooks } from "./scripts/main.js";
@@ -22,8 +22,6 @@ import { registerSettings } from "./scripts/settings.js";
 /* Initialize module					*/
 /* ------------------------------------ */
 Hooks.once("init", async () => {
-  // console.log(`${CONSTANTS.MODULE_NAME} | Initializing ${CONSTANTS.MODULE_NAME}`);
-
   // Register custom module settings
   registerSettings();
 
@@ -45,7 +43,6 @@ Hooks.once("init", async () => {
 Hooks.once("setup", function () {
   // Do anything after initialization but before ready
   //setupModules();
-
   setupHooks();
 
   //registerSettings();
@@ -61,7 +58,6 @@ Hooks.once("ready", () => {
     if (game.modules.get("lib-wrapper")) word = "activate";
     throw error(`Requires the 'libWrapper' module. Please ${word} it.`);
   }
-
   readyHooks();
 });
 

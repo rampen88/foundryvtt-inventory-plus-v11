@@ -2,7 +2,7 @@
   "id": "inventory-plus",
   "title": "Inventory+",
   "description": "Enhances the default dnd5e sheets inventory to allow for reorganization",
-  "version": "0.6.24",
+  "version": "0.6.25",
   "authors": [
     {
       "name": "Felix#6196"
@@ -17,6 +17,10 @@
       "ko-fi": "",
       "reddit": "",
       "email": ""
+    },
+    {
+      "name": "rampen88",
+      "discord": "rampen88"
     }
   ],
   "type": "module",
@@ -32,7 +36,8 @@
     "./README.md",
     "./icons/**",
     "./images/**",
-    "./packs/**"
+    "./packs/**",
+    "./module.js"
   ],
   "media": [
     {
@@ -85,31 +90,17 @@
   "styles": ["styles/inventory-plus.css", "styles/sumoselect.css"],
   "packs": [],
   "compatibility": {
-    "minimum": 10,
-    "verified": 10,
-    "maximum": 10
+    "minimum": 11,
+    "verified": 11
   },
-  "manifestPlusVersion": "1.2.0",
-  "url": "https://github.com/p4535992/foundryvtt-inventory-plus",
-  "manifest": "https://github.com/p4535992/foundryvtt-inventory-plus/releases/download/0.6.24/module.json",
-  "download": "https://github.com/p4535992/foundryvtt-inventory-plus/releases/download/0.6.24/module.zip",
-  "readme": "https://github.com/p4535992/foundryvtt-inventory-plus/blob/master/README.md",
-  "changelog": "https://github.com/p4535992/foundryvtt-inventory-plus/blob/master/CHANGELOG.md",
-  "bugs": "https://github.com/p4535992/foundryvtt-inventory-plus/issues",
+  "url": "https://github.com/rampen88/foundryvtt-inventory-plus-v11",
   "allowBugReporter": true,
   "relationships": {
     "systems": [
       {
         "id": "dnd5e",
         "type": "system",
-        "compatibility": {
-          "minimum": "2.1.0",
-          "verified": "2.1.0"
-        }
-      },
-      {
-        "id": "sw5e",
-        "type": "system"
+        "compatibility": {}
       }
     ],
     "requires": [
@@ -118,16 +109,6 @@
         "type": "module",
         "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
         "compatibility": {}
-      }
-    ],
-    "conflicts": [
-      {
-        "id": "encumbrance-calculator-5e",
-        "reason": "Redundancy of features you can disable 'Encumbrance calculator 5e' module if you want, but there is no conflict"
-      },
-      {
-        "id": "illandril-inventory-sorter",
-        "reason": "Redundancy of features you can disable 'Illandril's Inventory Sorter (5e)' module if you want, but there is no conflict"
       }
     ]
   }

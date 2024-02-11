@@ -55,7 +55,11 @@ export const readyHooks = async () => {
 
       // let app = this;
       const actor = this.actor;
-      const newInventory = InventoryPlus.processInventory(this, actor, sheetData.inventory);
+      const newInventory = InventoryPlus.processInventory(
+        this,
+        actor,
+        sheetData.inventory
+      );
       sheetData.inventory = Object.values(newInventory);
       const encumbrance5e = API.calculateWeightFromActor(actor);
       if (encumbrance5e) {
@@ -85,7 +89,11 @@ export const readyHooks = async () => {
 
         // let app = this;
         const actor = this.actor;
-        const newInventory = InventoryPlus.processInventory(this, actor, sheetData.features);
+        const newInventory = InventoryPlus.processInventory(
+          this,
+          actor,
+          sheetData.features
+        );
         sheetData.features = Object.values(newInventory);
         const encumbrance5e = API.calculateWeightFromActor(actor);
         if (encumbrance5e) {
@@ -116,7 +124,11 @@ export const readyHooks = async () => {
 
         // let app = this;
         const actor = this.actor;
-        const newInventory = InventoryPlus.processInventory(this, actor, sheetData.features);
+        const newInventory = InventoryPlus.processInventory(
+          this,
+          actor,
+          sheetData.features
+        );
         sheetData.features = Object.values(newInventory);
 
         // const newInventoryCargo = InventoryPlus.processInventory(this, actor, sheetData.cargo);
@@ -141,7 +153,8 @@ export const readyHooks = async () => {
     );
   }
 
-  // Hooks.on(`renderActorSheet5eCharacter`, (app, html, data) => {
+  //Hooks.on(`renderActorSheet5eCharacter`, (app, html, data) => {
+  //});
   Hooks.on(`renderActorSheet`, (app, html, data) => {
     module.renderActorSheet5eCharacterInventoryPlus(app, html, data);
     module.renderActorSheetEnableInventorySorter(app, html, data);
@@ -184,16 +197,39 @@ const module = {
     let targetCssInventoryPlus = undefined;
     if (actorType === "character") {
       targetCssInventoryPlus = "inventory";
-      inventoryPlusItemTypeCollection = inventoryPlusItemTypeCollectionForCharacter;
-      app.inventoryPlus.addInventoryFunctions(html, actorType, targetCssInventoryPlus, inventoryPlusItemTypeCollection);
-    } else if (actorType === "npc" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")) {
+      inventoryPlusItemTypeCollection =
+        inventoryPlusItemTypeCollectionForCharacter;
+      app.inventoryPlus.addInventoryFunctions(
+        html,
+        actorType,
+        targetCssInventoryPlus,
+        inventoryPlusItemTypeCollection
+      );
+    } else if (
+      actorType === "npc" &&
+      game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")
+    ) {
       targetCssInventoryPlus = "features";
       inventoryPlusItemTypeCollection = inventoryPlusItemTypeCollectionForNPC;
-      app.inventoryPlus.addInventoryFunctions(html, actorType, targetCssInventoryPlus, inventoryPlusItemTypeCollection);
-    } else if (actorType === "vehicle" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")) {
+      app.inventoryPlus.addInventoryFunctions(
+        html,
+        actorType,
+        targetCssInventoryPlus,
+        inventoryPlusItemTypeCollection
+      );
+    } else if (
+      actorType === "vehicle" &&
+      game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")
+    ) {
       targetCssInventoryPlus = "features";
-      inventoryPlusItemTypeCollection = inventoryPlusItemTypeCollectionForVehicle;
-      app.inventoryPlus.addInventoryFunctions(html, actorType, targetCssInventoryPlus, inventoryPlusItemTypeCollection);
+      inventoryPlusItemTypeCollection =
+        inventoryPlusItemTypeCollectionForVehicle;
+      app.inventoryPlus.addInventoryFunctions(
+        html,
+        actorType,
+        targetCssInventoryPlus,
+        inventoryPlusItemTypeCollection
+      );
 
       // SPECIAL CASE CARGO
       // targetCssInventoryPlus = "cargo";
@@ -284,7 +320,9 @@ const module = {
       return false;
     }
     if (user.character.id !== item.parent.id) {
-      debug(`Can't reorder you can order ONLY the actor connected to the game user`);
+      debug(
+        `Can't reorder you can order ONLY the actor connected to the game user`
+      );
       return false;
     }
     if (changes.sort !== undefined) {
@@ -313,7 +351,9 @@ const module = {
       return false;
     }
     if (user.character.id !== item.parent.id) {
-      debug(`Can't reorder you can order ONLY the actor connected to the game user`);
+      debug(
+        `Can't reorder you can order ONLY the actor connected to the game user`
+      );
       return false;
     }
     if (userId === game.userId) {
@@ -332,7 +372,9 @@ const module = {
       return false;
     }
     if (user.character.id !== item.parent.id) {
-      debug(`Can't reorder you can order ONLY the actor connected to the game user`);
+      debug(
+        `Can't reorder you can order ONLY the actor connected to the game user`
+      );
       return false;
     }
     if (userId === game.userId) {
@@ -351,7 +393,9 @@ const module = {
       return false;
     }
     if (user.character.id !== item.parent.id) {
-      debug(`Can't reorder you can order ONLY the actor connected to the game user`);
+      debug(
+        `Can't reorder you can order ONLY the actor connected to the game user`
+      );
       return false;
     }
     if (userId === game.userId) {
@@ -372,7 +416,9 @@ const module = {
       return false;
     }
     if (user.character.id !== actorSheet.actor.id) {
-      debug(`Can't reorder you can order ONLY the actor connected to the game user`);
+      debug(
+        `Can't reorder you can order ONLY the actor connected to the game user`
+      );
       return false;
     }
     if (actorSheet?.isEditable) {
@@ -480,7 +526,10 @@ const module = {
 
       // let createdItem: Item | undefined = undefined;
 
-      itemToCheck = itemDropped instanceof Item ? itemDropped : await Item.implementation.fromDropData(itemDropped);
+      itemToCheck =
+        itemDropped instanceof Item
+          ? itemDropped
+          : await Item.implementation.fromDropData(itemDropped);
 
       itemDataToCheck = itemToCheck.toObject();
     }
@@ -528,7 +577,12 @@ const module = {
       //   }
     }
 
-    if (targetType === "feat" || targetType === "spell" || targetType === "class" || targetType === "subclass") {
+    if (
+      targetType === "feat" ||
+      targetType === "spell" ||
+      targetType === "class" ||
+      targetType === "subclass"
+    ) {
       if (!this.actor.isOwner) {
         return false;
       }
@@ -591,7 +645,12 @@ const module = {
     }
 
     if (!targetType || !this.inventoryPlus.customCategorys[targetType]) {
-      warn(i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.nocategoryfounded`, { targetType: targetType }), true);
+      warn(
+        i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.nocategoryfounded`, {
+          targetType: targetType,
+        }),
+        true
+      );
 
       if (!this.actor.isOwner) {
         return false;
@@ -621,12 +680,18 @@ const module = {
     const categoryRef = this.inventoryPlus.customCategorys[targetType];
 
     if (!categoryRef) {
-      error(`Could not retrieve a category with the type '${targetType}'`, true);
+      error(
+        `Could not retrieve a category with the type '${targetType}'`,
+        true
+      );
       return;
     }
 
     if (!categoryRef.label) {
-      error(`Can't find a label on category with the type '${targetType}'`, true);
+      error(
+        `Can't find a label on category with the type '${targetType}'`,
+        true
+      );
       if (!this.actor.isOwner) {
         return false;
       }
@@ -659,9 +724,12 @@ const module = {
         // START WEIGHT CONTROL
         if (API.isCategoryFulled(targetActor, targetType, itemDataToCheck)) {
           warn(
-            i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.exceedsmaxweight`, {
-              categoryName: categoryName,
-            }),
+            i18nFormat(
+              `${CONSTANTS.MODULE_NAME}.dialogs.warn.exceedsmaxweight`,
+              {
+                categoryName: categoryName,
+              }
+            ),
             true
           );
           return;
@@ -670,10 +738,13 @@ const module = {
         // START ACCEPTABLE TYPE
         if (!API.isAcceptableType(categoryRef, itemDataToCheck)) {
           warn(
-            i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.noacceptabletype`, {
-              categoryName: categoryName,
-              itemDataType: itemDataToCheck.type,
-            }),
+            i18nFormat(
+              `${CONSTANTS.MODULE_NAME}.dialogs.warn.noacceptabletype`,
+              {
+                categoryName: categoryName,
+                itemDataType: itemDataToCheck.type,
+              }
+            ),
             true
           );
           return;
@@ -717,9 +788,12 @@ const module = {
           // START WEIGHT CONTROL
           if (API.isCategoryFulled(targetActor, targetType, itemDataToCheck)) {
             warn(
-              i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.exceedsmaxweight`, {
-                categoryName: categoryName,
-              }),
+              i18nFormat(
+                `${CONSTANTS.MODULE_NAME}.dialogs.warn.exceedsmaxweight`,
+                {
+                  categoryName: categoryName,
+                }
+              ),
               true
             );
             return;
@@ -728,10 +802,13 @@ const module = {
           // START ACCEPTABLE TYPE
           if (!API.isAcceptableType(categoryRef, itemDataToCheck)) {
             warn(
-              i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.noacceptabletype`, {
-                categoryName: categoryName,
-                itemDataType: itemDataToCheck.type,
-              }),
+              i18nFormat(
+                `${CONSTANTS.MODULE_NAME}.dialogs.warn.noacceptabletype`,
+                {
+                  categoryName: categoryName,
+                  itemDataType: itemDataToCheck.type,
+                }
+              ),
               true
             );
             return;
@@ -806,7 +883,11 @@ const module = {
         return;
       }
       // END itemDataType
-      await dropedItem.setFlag(CONSTANTS.MODULE_NAME, InventoryPlusFlags.CATEGORY, targetType);
+      await dropedItem.setFlag(
+        CONSTANTS.MODULE_NAME,
+        InventoryPlusFlags.CATEGORY,
+        targetType
+      );
       itemType = targetType;
     }
 
@@ -824,7 +905,10 @@ const module = {
     const target = siblings.find((s) => s.id === targetId);
 
     // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(dropedItem, { target: target, siblings });
+    const sortUpdates = SortingHelpers.performIntegerSort(dropedItem, {
+      target: target,
+      siblings,
+    });
     let updateData = sortUpdates.map((u) => {
       const update = u.update;
       update._id = u.target.id;

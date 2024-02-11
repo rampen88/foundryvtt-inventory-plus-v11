@@ -43,27 +43,35 @@ export const registerSettings = function () {
   // INTEGRATION VARIANT ENCUMBRANCE
   // =================================
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "enableIntegrationWithVariantEncumbrance", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.enableIntegrationWithVariantEncumbrance.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.enableIntegrationWithVariantEncumbrance.hint`,
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "enableIntegrationWithVariantEncumbrance",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.enableIntegrationWithVariantEncumbrance.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.enableIntegrationWithVariantEncumbrance.hint`,
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: true,
+    }
+  );
 
   // =================================
   // INTEGRATION ITEM COLLECTION
   // =================================
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "useEquippedUnequippedItemCollectionFeature", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.useEquippedUnequippedItemCollectionFeature.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.useEquippedUnequippedItemCollectionFeature.hint`,
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "useEquippedUnequippedItemCollectionFeature",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.useEquippedUnequippedItemCollectionFeature.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.useEquippedUnequippedItemCollectionFeature.hint`,
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: true,
+    }
+  );
 
   // =================================
   // INTEGRATION TRANSFER STUFF (REMOVED TRANSFER ON OTHER MODULE)
@@ -148,77 +156,127 @@ export const registerSettings = function () {
     type: Number,
   });
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "doNotIncreaseWeightByQuantityForNoAmmunition", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.doNotIncreaseWeightByQuantityForNoAmmunition.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.doNotIncreaseWeightByQuantityForNoAmmunition.hint`,
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "doNotIncreaseWeightByQuantityForNoAmmunition",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.doNotIncreaseWeightByQuantityForNoAmmunition.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.doNotIncreaseWeightByQuantityForNoAmmunition.hint`,
+      scope: "client",
+      config: true,
+      default: false,
+      type: Boolean,
+    }
+  );
+
+  game.settings.register(CONSTANTS.MODULE_NAME, "unequippedMultiplier", {
+    name: `unequippedMultiplier`,
+    hint: `unequippedMultiplier`,
     scope: "client",
     config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_NAME, "doNotApplyWeightForEquippedArmor", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.doNotApplyWeightForEquippedArmor.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.doNotApplyWeightForEquippedArmor.hint`,
-    scope: "world",
-    config: true,
-    default: false,
-    type: Boolean,
-  });
-
-  game.settings.register(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorClothing", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorClothing.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorClothing.hint`,
-    scope: "world",
-    config: true,
-    default: 0,
+    default: 1,
     type: Number,
   });
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorLight", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorLight.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorLight.hint`,
-    scope: "world",
+  game.settings.register(CONSTANTS.MODULE_NAME, "equippedMultiplier", {
+    name: `equippedMultiplier`,
+    hint: `equippedMultiplier`,
+    scope: "client",
     config: true,
-    default: 0,
+    default: 1,
     type: Number,
   });
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorMedium", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorMedium.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorMedium.hint`,
-    scope: "world",
-    config: true,
-    default: 0,
-    type: Number,
-  });
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "doNotApplyWeightForEquippedArmor",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.doNotApplyWeightForEquippedArmor.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.doNotApplyWeightForEquippedArmor.hint`,
+      scope: "world",
+      config: true,
+      default: false,
+      type: Boolean,
+    }
+  );
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorHeavy", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorHeavy.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorHeavy.hint`,
-    scope: "world",
-    config: true,
-    default: 0,
-    type: Number,
-  });
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "applyWeightMultiplierForEquippedArmorClothing",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorClothing.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorClothing.hint`,
+      scope: "world",
+      config: true,
+      default: 0,
+      type: Number,
+    }
+  );
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorNatural", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorNatural.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorNatural.hint`,
-    scope: "world",
-    config: true,
-    default: 0,
-    type: Number,
-  });
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "applyWeightMultiplierForEquippedArmorLight",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorLight.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorLight.hint`,
+      scope: "world",
+      config: true,
+      default: 0,
+      type: Number,
+    }
+  );
 
-  game.settings.register(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedContainer", {
-    name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedContainer.name`,
-    hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedContainer.hint`,
-    scope: "world",
-    config: true,
-    default: -1,
-    type: Number,
-  });
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "applyWeightMultiplierForEquippedArmorMedium",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorMedium.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorMedium.hint`,
+      scope: "world",
+      config: true,
+      default: 0,
+      type: Number,
+    }
+  );
+
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "applyWeightMultiplierForEquippedArmorHeavy",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorHeavy.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorHeavy.hint`,
+      scope: "world",
+      config: true,
+      default: 0,
+      type: Number,
+    }
+  );
+
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "applyWeightMultiplierForEquippedArmorNatural",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorNatural.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedArmorNatural.hint`,
+      scope: "world",
+      config: true,
+      default: 0,
+      type: Number,
+    }
+  );
+
+  game.settings.register(
+    CONSTANTS.MODULE_NAME,
+    "applyWeightMultiplierForEquippedContainer",
+    {
+      name: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedContainer.name`,
+      hint: `${CONSTANTS.MODULE_NAME}.setting.applyWeightMultiplierForEquippedContainer.hint`,
+      scope: "world",
+      config: true,
+      default: -1,
+      type: Number,
+    }
+  );
 
   // ===================================================================
 
@@ -255,21 +313,28 @@ class ResetSettingsDialog extends FormApplication {
     super(...args);
     //@ts-ignore
     return new Dialog({
-      title: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.title`),
+      title: game.i18n.localize(
+        `${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.title`
+      ),
       content:
         '<p style="margin-bottom:1rem;">' +
-        game.i18n.localize(`${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.content`) +
+        game.i18n.localize(
+          `${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.content`
+        ) +
         "</p>",
       buttons: {
         confirm: {
           icon: '<i class="fas fa-check"></i>',
-          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.confirm`),
+          label: game.i18n.localize(
+            `${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.confirm`
+          ),
           callback: async () => {
             const worldSettings = game.settings.storage
               ?.get("world")
-              ?.filter((setting) => setting.key.startsWith(`${CONSTANTS.MODULE_NAME}.`));
+              ?.filter((setting) =>
+                setting.key.startsWith(`${CONSTANTS.MODULE_NAME}.`)
+              );
             for (let setting of worldSettings) {
-              console.log(`Reset setting '${setting.key}'`);
               await setting.delete();
             }
             //window.location.reload();
@@ -277,7 +342,9 @@ class ResetSettingsDialog extends FormApplication {
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
-          label: game.i18n.localize(`${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.cancel`),
+          label: game.i18n.localize(
+            `${CONSTANTS.MODULE_NAME}.dialogs.resetsettings.cancel`
+          ),
         },
       },
       default: "cancel",

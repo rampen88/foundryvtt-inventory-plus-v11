@@ -4,16 +4,7 @@
 
 import API from "./api.js";
 import CONSTANTS from "./constants.js";
-import {
-  Category,
-  EncumbranceBulkData,
-  EncumbranceData,
-  InventoryPlusFlags,
-  InventoryPlusItemType,
-  inventoryPlusItemTypeCollectionForCharacter,
-  inventoryPlusItemTypeCollectionForNPC,
-  inventoryPlusItemTypeCollectionForVehicle,
-} from "./inventory-plus-models.js";
+import { Category, InventoryPlusFlags } from "./inventory-plus-models.js";
 import {
   debug,
   duplicateExtended,
@@ -59,13 +50,22 @@ export class InventoryPlus {
   }
 
   initCategorys() {
-    let flagCategorys = this.actor.getFlag(CONSTANTS.MODULE_NAME, InventoryPlusFlags.CATEGORYS);
+    let flagCategorys = this.actor.getFlag(
+      CONSTANTS.MODULE_NAME,
+      InventoryPlusFlags.CATEGORYS
+    );
     const actorType = this.actor.type;
     if (actorType === "character") {
       flagCategorys = initCategoriesForCharacter(flagCategorys);
-    } else if (actorType === "npc" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")) {
+    } else if (
+      actorType === "npc" &&
+      game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")
+    ) {
       flagCategorys = initCategoriesForNPC(flagCategorys);
-    } else if (actorType === "vehicle" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")) {
+    } else if (
+      actorType === "vehicle" &&
+      game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")
+    ) {
       flagCategorys = initCategoriesForVehicle(flagCategorys);
     } else {
       // Cannot happened
@@ -89,7 +89,12 @@ export class InventoryPlus {
     this.applySortKey();
   }
 
-  addInventoryFunctions(html, actorType, targetCssInventoryPlus, inventoryPlusItemTypeCollection) {
+  addInventoryFunctions(
+    html,
+    actorType,
+    targetCssInventoryPlus,
+    inventoryPlusItemTypeCollection
+  ) {
     if (!actorType || !html) {
       // Cannot happened
       return;
@@ -100,27 +105,44 @@ export class InventoryPlus {
      */
     const flagDisableDefaultCategories = true; // IS ALWAYS FALSE FOR NOW
     const labelDialogDisableDefaultCategories = flagDisableDefaultCategories
-      ? i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.reenabledefaultcategories`)
-      : i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.removedefaultcategories`);
+      ? i18n(
+          `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.reenabledefaultcategories`
+        )
+      : i18n(
+          `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.removedefaultcategories`
+        );
 
-    const iconClass = flagDisableDefaultCategories ? `fa-plus-square` : `fa-minus-square`;
+    const iconClass = flagDisableDefaultCategories
+      ? `fa-plus-square`
+      : `fa-minus-square`;
 
     const isVariantEncumbranceEnabled =
       game.modules.get("variant-encumbrance-dnd5e")?.active &&
-      game.settings.get(CONSTANTS.MODULE_NAME, "enableIntegrationWithVariantEncumbrance");
+      game.settings.get(
+        CONSTANTS.MODULE_NAME,
+        "enableIntegrationWithVariantEncumbrance"
+      );
     const isBulked = isVariantEncumbranceEnabled
-      ? isVariantEncumbranceEnabled && game.settings.get("variant-encumbrance-dnd5e", "enableBulkSystem")
+      ? isVariantEncumbranceEnabled &&
+        game.settings.get("variant-encumbrance-dnd5e", "enableBulkSystem")
       : false;
 
-    // ONly gm can do this
-
-    if (game.user?.isGM && !game.settings.get(CONSTANTS.MODULE_NAME, "hideButtonDefaultCategories")) {
+    // Only gm can do this
+    if (
+      game.user?.isGM &&
+      !game.settings.get(CONSTANTS.MODULE_NAME, "hideButtonDefaultCategories")
+    ) {
       const status = flagDisableDefaultCategories
         ? i18n(`inventory-plus.inv-plus-dialog.reenabledefaultcategories`)
-        : i18n(`inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessagedisable`);
-      const msg = i18nFormat(`inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessage`, {
-        status: status,
-      });
+        : i18n(
+            `inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessagedisable`
+          );
+      const msg = i18nFormat(
+        `inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessage`,
+        {
+          status: status,
+        }
+      );
       const removeDefaultCategoriesBtn = $(
         `<a class="custom-category"><i class="fas ${iconClass}"></i>${labelDialogDisableDefaultCategories}</a>`
       ).click(async (ev) => {
@@ -140,17 +162,26 @@ export class InventoryPlus {
               label: i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.accept`),
               callback: async (html) => {
                 const f =
-                  flagDisableDefaultCategories && String(flagDisableDefaultCategories) === "true" ? true : false;
+                  flagDisableDefaultCategories &&
+                  String(flagDisableDefaultCategories) === "true"
+                    ? true
+                    : false;
                 if (!f) {
                   if (actorType === "character") {
                     for (const catType of defaultSectionsForCharacters) {
                       this.removeCategory(catType);
                     }
-                  } else if (actorType === "npc" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")) {
+                  } else if (
+                    actorType === "npc" &&
+                    game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")
+                  ) {
                     for (const catType of defaultSectionsForNPC) {
                       this.removeCategory(catType);
                     }
-                  } else if (actorType === "vehicle" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")) {
+                  } else if (
+                    actorType === "vehicle" &&
+                    game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")
+                  ) {
                     for (const catType of defaultSectionsForVehicle) {
                       this.removeCategory(catType);
                     }
@@ -167,11 +198,23 @@ export class InventoryPlus {
                   }
                 } else {
                   if (actorType === "character") {
-                    this.customCategorys = adjustCustomCategoriesForCharacter(this.customCategorys);
-                  } else if (actorType === "npc" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")) {
-                    this.customCategorys = adjustCustomCategoriesForNPC(this.customCategorys);
-                  } else if (actorType === "vehicle" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")) {
-                    this.customCategorys = adjustCustomCategoriesForVehicle(this.customCategorys);
+                    this.customCategorys = adjustCustomCategoriesForCharacter(
+                      this.customCategorys
+                    );
+                  } else if (
+                    actorType === "npc" &&
+                    game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")
+                  ) {
+                    this.customCategorys = adjustCustomCategoriesForNPC(
+                      this.customCategorys
+                    );
+                  } else if (
+                    actorType === "vehicle" &&
+                    game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")
+                  ) {
+                    this.customCategorys = adjustCustomCategoriesForVehicle(
+                      this.customCategorys
+                    );
                   } else {
                     // Cannot happened
                     // warn(
@@ -196,7 +239,9 @@ export class InventoryPlus {
         });
         d.render(true);
       });
-      html.find(`.${targetCssInventoryPlus} .filter-list`).prepend(removeDefaultCategoriesBtn);
+      html
+        .find(`.${targetCssInventoryPlus} .filter-list`)
+        .prepend(removeDefaultCategoriesBtn);
     }
 
     /*
@@ -208,15 +253,22 @@ export class InventoryPlus {
       )}</a>`
     ).click(async (ev) => {
       ev.preventDefault();
-      const explicitTypesFromList = inventoryPlusItemTypeCollection.filter((t) => {
-        return t.isInventory;
-      });
-      const template = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/categoryDialog.hbs`, {
-        explicitTypes: explicitTypesFromList,
-        enabledBulk: isBulked,
-      });
+      const explicitTypesFromList = inventoryPlusItemTypeCollection.filter(
+        (t) => {
+          return t.isInventory;
+        }
+      );
+      const template = await renderTemplate(
+        `modules/${CONSTANTS.MODULE_NAME}/templates/categoryDialog.hbs`,
+        {
+          explicitTypes: explicitTypesFromList,
+          enabledBulk: isBulked,
+        }
+      );
       const d = new Dialog({
-        title: i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.creatingnewinventorycategory`),
+        title: i18n(
+          `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.creatingnewinventorycategory`
+        ),
         content: template,
         buttons: {
           accept: {
@@ -224,8 +276,14 @@ export class InventoryPlus {
             label: i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.accept`),
             callback: async (html) => {
               const input = html.find("input");
-              const selectExplicitTypes = $(html.find('select[name="explicitTypes"')[0]);
-              this.createCategory(input, selectExplicitTypes, inventoryPlusItemTypeCollection); // ,selectDefaultType
+              const selectExplicitTypes = $(
+                html.find('select[name="explicitTypes"')[0]
+              );
+              this.createCategory(
+                input,
+                selectExplicitTypes,
+                inventoryPlusItemTypeCollection
+              ); // ,selectDefaultType
             },
           },
           cancel: {
@@ -245,7 +303,9 @@ export class InventoryPlus {
       });
       d.render(true);
     });
-    html.find(`.${targetCssInventoryPlus} .filter-list`).prepend(addCategoryBtn);
+    html
+      .find(`.${targetCssInventoryPlus} .filter-list`)
+      .prepend(addCategoryBtn);
 
     /*
      *  add removal function
@@ -270,18 +330,35 @@ export class InventoryPlus {
     html.find(`.${targetCssInventoryPlus} a.item-create`).each((i, el) => {
       const type = el.dataset.type;
 
-      let categoryText = el.parentElement?.parentElement?.querySelector("h3")?.innerText;
+      let categoryText =
+        el.parentElement?.parentElement?.querySelector("h3")?.innerText;
+
       let headerElement = undefined;
       if (categoryText) {
         headerElement = $(el.parentElement?.parentElement?.querySelector("h3"));
       } else {
-        headerElement = $(el.parentElement?.parentElement?.parentElement?.querySelector("h3"));
-        categoryText = el.parentElement?.parentElement?.parentElement?.querySelector("h3")?.innerText;
+        headerElement = $(
+          el.parentElement?.parentElement?.parentElement?.querySelector("h3")
+        );
+        categoryText =
+          el.parentElement?.parentElement?.parentElement?.querySelector(
+            "h3"
+          )?.innerText;
       }
       if (!categoryText) {
-        warn(`No category text is been founded open a issue on the github project`);
+        warn(
+          `No category text is been founded open a issue on the github project`
+        );
       }
-      const categoryId = retrieveCategoryIdFromLabel(this.customCategorys, headerElement, categoryText);
+      // This doesn't seem to get the correct category.
+      //let tempCategoryId = retrieveCategoryIdFromLabel(
+      //  this.customCategorys,
+      //  headerElement,
+      //  categoryText
+      //);
+
+      // So lets just use the type, which appears to be correct anyway.
+      const categoryId = type;
 
       $(el).data("type", type);
       $(el).attr("data-type", type);
@@ -294,9 +371,13 @@ export class InventoryPlus {
       }
 
       const removeCategoryBtnS = `<a class="item-control remove-category"
-          title="${i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategory`)}"
+          title="${i18n(
+            `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategory`
+          )}"
           data-type="${type}" data-categoryid="${categoryId}">
-          <i class="fas fa-minus"></i>${i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategoryprefix`)}</a>`;
+          <i class="fas fa-minus"></i>${i18n(
+            `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategoryprefix`
+          )}</a>`;
 
       const linkElRemoveCategory = $(removeCategoryBtnS);
       $(el).after(linkElRemoveCategory);
@@ -304,20 +385,37 @@ export class InventoryPlus {
       linkElRemoveCategory.on("click", async (ev) => {
         ev.preventDefault();
         //const catType = ev.target.dataset.type || ev.currentTarget.dataset.type || type;
-        let catType = ev.target.dataset.categoryid || ev.currentTarget.dataset.categoryid;
+        let catType =
+          ev.target.dataset.categoryid || ev.currentTarget.dataset.categoryid;
         if (!catType) {
-          let categoryText = el.parentElement?.parentElement?.querySelector("h3")?.innerText;
+          let categoryText =
+            el.parentElement?.parentElement?.querySelector("h3")?.innerText;
           let headerElement = undefined;
           if (categoryText) {
-            headerElement = $(el.parentElement?.parentElement?.querySelector("h3"));
+            headerElement = $(
+              el.parentElement?.parentElement?.querySelector("h3")
+            );
           } else {
-            headerElement = $(el.parentElement?.parentElement?.parentElement?.querySelector("h3"));
-            categoryText = el.parentElement?.parentElement?.parentElement?.querySelector("h3")?.innerText;
+            headerElement = $(
+              el.parentElement?.parentElement?.parentElement?.querySelector(
+                "h3"
+              )
+            );
+            categoryText =
+              el.parentElement?.parentElement?.parentElement?.querySelector(
+                "h3"
+              )?.innerText;
           }
           if (!categoryText) {
-            warn(`No category text is been founded open a issue on the github project`);
+            warn(
+              `No category text is been founded open a issue on the github project`
+            );
           }
-          const categoryId = retrieveCategoryIdFromLabel(this.customCategorys, headerElement, categoryText);
+          const categoryId = retrieveCategoryIdFromLabel(
+            this.customCategorys,
+            headerElement,
+            categoryText
+          );
           catType = categoryId;
           if (categoryId) {
             if (!headerElement.attr("data-categoryid")) {
@@ -326,37 +424,64 @@ export class InventoryPlus {
           }
         }
         if (!catType) {
-          catType = ev.target.dataset.type || ev.currentTarget.dataset.type || type;
+          catType =
+            ev.target.dataset.type || ev.currentTarget.dataset.type || type;
         }
         const category = this.customCategorys[catType];
-        const categoryItems = API.getItemsFromCategory(this.actor, catType, this.customCategorys);
+        const categoryItems = API.getItemsFromCategory(
+          this.actor,
+          catType,
+          this.customCategorys
+        );
         if (categoryItems && categoryItems.length > 0) {
           warn(
-            i18nFormat(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategorycheckitems`, {
-              categoryName: i18n(category.label),
-            }),
+            i18nFormat(
+              `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategorycheckitems`,
+              {
+                categoryName: i18n(category.label),
+              }
+            ),
             true
           );
           return;
         }
-        const categoryName = this.customCategorys[type]?.label ? i18n(this.customCategorys[type]?.label) : "Unknown";
+        const categoryName = this.customCategorys[type]?.label
+          ? i18n(this.customCategorys[type]?.label)
+          : "Unknown";
         const status = flagDisableDefaultCategories
-          ? i18n(`inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessagereenable`)
-          : i18n(`inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessagedisable`);
-        const msg = i18nFormat(`inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessage`, {
-          status: status,
-        });
-        const msgDeleteCategory = i18nFormat(`inventory-plus.inv-plus-dialog.confirmationdeletecategory`, {
-          categoryName: categoryName,
-        });
-        const msgBackupActor = i18n(`inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessage2`);
-        const template = await renderTemplate(`modules/${CONSTANTS.MODULE_NAME}/templates/removeCategoryDialog.hbs`, {
-          msg: msg,
-          msgDeleteCategory: msgDeleteCategory,
-          msgBackupActor: msgBackupActor,
-        });
+          ? i18n(
+              `inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessagereenable`
+            )
+          : i18n(
+              `inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessagedisable`
+            );
+        const msg = i18nFormat(
+          `inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessage`,
+          {
+            status: status,
+          }
+        );
+        const msgDeleteCategory = i18nFormat(
+          `inventory-plus.inv-plus-dialog.confirmationdeletecategory`,
+          {
+            categoryName: categoryName,
+          }
+        );
+        const msgBackupActor = i18n(
+          `inventory-plus.inv-plus-dialog.removedefaulcategorieswarnmessage2`
+        );
+        const template = await renderTemplate(
+          `modules/${CONSTANTS.MODULE_NAME}/templates/removeCategoryDialog.hbs`,
+          {
+            msg: msg,
+            msgDeleteCategory: msgDeleteCategory,
+            msgBackupActor: msgBackupActor,
+          }
+        );
         const d = new Dialog({
-          title: i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategory`),
+          title: i18n(
+            `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.deletecategory`
+          ),
           content: template,
           buttons: {
             accept: {
@@ -386,20 +511,37 @@ export class InventoryPlus {
       linkElItemCreate2.on("click", (ev) => {
         ev.preventDefault();
         // let catType = ev.target.dataset.type || ev.currentTarget.dataset.type;
-        let catType = ev.target.dataset.categoryid || ev.currentTarget.dataset.categoryid;
+        let catType =
+          ev.target.dataset.categoryid || ev.currentTarget.dataset.categoryid;
         if (!catType) {
-          let categoryText = el.parentElement?.parentElement?.querySelector("h3")?.innerText;
+          let categoryText =
+            el.parentElement?.parentElement?.querySelector("h3")?.innerText;
           let headerElement = undefined;
           if (categoryText) {
-            headerElement = $(el.parentElement?.parentElement?.querySelector("h3"));
+            headerElement = $(
+              el.parentElement?.parentElement?.querySelector("h3")
+            );
           } else {
-            headerElement = $(el.parentElement?.parentElement?.parentElement?.querySelector("h3"));
-            categoryText = el.parentElement?.parentElement?.parentElement?.querySelector("h3")?.innerText;
+            headerElement = $(
+              el.parentElement?.parentElement?.parentElement?.querySelector(
+                "h3"
+              )
+            );
+            categoryText =
+              el.parentElement?.parentElement?.parentElement?.querySelector(
+                "h3"
+              )?.innerText;
           }
           if (!categoryText) {
-            warn(`No category text is been founded open a issue on the github project`);
+            warn(
+              `No category text is been founded open a issue on the github project`
+            );
           }
-          const categoryId = retrieveCategoryIdFromLabel(this.customCategorys, headerElement, categoryText);
+          const categoryId = retrieveCategoryIdFromLabel(
+            this.customCategorys,
+            headerElement,
+            categoryText
+          );
           catType = categoryId;
           if (categoryId) {
             if (!headerElement.attr("data-categoryid")) {
@@ -408,65 +550,88 @@ export class InventoryPlus {
           }
         }
         if (!catType) {
-          catType = $(ev.currentTarget).parent().find(".remove-category")[0]?.dataset.categoryid;
+          catType = $(ev.currentTarget).parent().find(".remove-category")[0]
+            ?.dataset.categoryid;
         }
         if (!catType) {
           catType = ev.target.dataset.type || ev.currentTarget.dataset.type;
         }
         if (!catType) {
-          catType = $(ev.currentTarget).parent().find(".remove-category")[0]?.dataset.type;
+          catType = $(ev.currentTarget).parent().find(".remove-category")[0]
+            ?.dataset.type;
         }
         this._onItemCreate(ev, catType);
       });
     });
 
-    html.find(`.${targetCssInventoryPlus} a.item-create`).css("display", "none");
+    html
+      .find(`.${targetCssInventoryPlus} a.item-create`)
+      .css("display", "none");
 
-    html.find(`.${targetCssInventoryPlus} a.quick-insert-link`).each((i, el) => {
-      //let catType = el.attributes["data-type"];
-      //if (!catType) {
-      //	catType = $(el).parent().find(".remove-category")[0]?.dataset.type;
-      //}
-      let catType = el.attributes["data-categoryid"];
-      if (!catType) {
-        let categoryText = el.parentElement?.parentElement?.querySelector("h3")?.innerText;
-        let headerElement = undefined;
-        if (categoryText) {
-          headerElement = $(el.parentElement?.parentElement?.querySelector("h3"));
-        } else {
-          headerElement = $(el.parentElement?.parentElement?.parentElement?.querySelector("h3"));
-          categoryText = el.parentElement?.parentElement?.parentElement?.querySelector("h3")?.innerText;
-        }
-        if (!categoryText) {
-          warn(`No category text is been founded open a issue on the github project`);
-        }
-        const categoryId = retrieveCategoryIdFromLabel(this.customCategorys, headerElement, categoryText);
-        catType = categoryId;
-        if (categoryId) {
-          if (!headerElement.attr("data-categoryid")) {
-            headerElement.attr("data-categoryid", categoryId);
+    html
+      .find(`.${targetCssInventoryPlus} a.quick-insert-link`)
+      .each((i, el) => {
+        //let catType = el.attributes["data-type"];
+        //if (!catType) {
+        //	catType = $(el).parent().find(".remove-category")[0]?.dataset.type;
+        //}
+        let catType = el.attributes["data-categoryid"];
+        if (!catType) {
+          let categoryText =
+            el.parentElement?.parentElement?.querySelector("h3")?.innerText;
+          let headerElement = undefined;
+          if (categoryText) {
+            headerElement = $(
+              el.parentElement?.parentElement?.querySelector("h3")
+            );
+          } else {
+            headerElement = $(
+              el.parentElement?.parentElement?.parentElement?.querySelector(
+                "h3"
+              )
+            );
+            categoryText =
+              el.parentElement?.parentElement?.parentElement?.querySelector(
+                "h3"
+              )?.innerText;
+          }
+          if (!categoryText) {
+            warn(
+              `No category text is been founded open a issue on the github project`
+            );
+          }
+          const categoryId = retrieveCategoryIdFromLabel(
+            this.customCategorys,
+            headerElement,
+            categoryText
+          );
+          catType = categoryId;
+          if (categoryId) {
+            if (!headerElement.attr("data-categoryid")) {
+              headerElement.attr("data-categoryid", categoryId);
+            }
           }
         }
-      }
-      if (!catType) {
-        catType = $(el).parent().find(".remove-category")[0]?.dataset.categoryid;
-      }
-      if (!catType) {
-        catType = el.attributes["data-type"];
-      }
-      if (!catType) {
-        catType = $(el).parent().find(".remove-category")[0]?.dataset.type;
-      }
+        if (!catType) {
+          catType = $(el).parent().find(".remove-category")[0]
+            ?.dataset.categoryid;
+        }
+        if (!catType) {
+          catType = el.attributes["data-type"];
+        }
+        if (!catType) {
+          catType = $(el).parent().find(".remove-category")[0]?.dataset.type;
+        }
 
-      let itemType = el.attributes["data-type"];
-      if (!itemType) {
-        itemType = $(el).parent().find(".remove-category")[0]?.dataset.type;
-      }
+        let itemType = el.attributes["data-type"];
+        if (!itemType) {
+          itemType = $(el).parent().find(".remove-category")[0]?.dataset.type;
+        }
 
-      $(el).data("type", itemType);
-      $(el).attr("data-type", itemType);
-      $(el).attr("data-categoryid", catType);
-    });
+        $(el).data("type", itemType);
+        $(el).attr("data-type", itemType);
+        $(el).attr("data-categoryid", catType);
+      });
 
     /*
      *  add extra header functions
@@ -480,7 +645,11 @@ export class InventoryPlus {
 
       const headerElement = $(headerTmp.querySelector("h3"));
       const categoryText = headerTmp.querySelector("h3")?.innerText;
-      const categoryId = retrieveCategoryIdFromLabel(this.customCategorys, headerElement, categoryText);
+      const categoryId = retrieveCategoryIdFromLabel(
+        this.customCategorys,
+        headerElement,
+        categoryText
+      );
       if (categoryId) {
         if (!headerElement.attr("data-categoryid")) {
           headerElement.attr("data-categoryid", categoryId);
@@ -492,24 +661,34 @@ export class InventoryPlus {
 
       if (this.customCategorys[categoryId] === undefined) {
         warn(
-          i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.nocategoryfoundbytype`, {
-            type: categoryId ?? categoryText,
-          })
+          i18nFormat(
+            `${CONSTANTS.MODULE_NAME}.dialogs.warn.nocategoryfoundbytype`,
+            {
+              type: categoryId ?? categoryText,
+            }
+          )
         );
         continue;
       }
 
       const currentCategory = this.customCategorys[categoryId];
-      if (!currentCategory.explicitTypes || currentCategory.explicitTypes.length === 0) {
-        currentCategory.explicitTypes = inventoryPlusItemTypeCollection.filter((t) => {
-          return t.isInventory;
-        });
+      if (
+        !currentCategory.explicitTypes ||
+        currentCategory.explicitTypes.length === 0
+      ) {
+        currentCategory.explicitTypes = inventoryPlusItemTypeCollection.filter(
+          (t) => {
+            return t.isInventory;
+          }
+        );
       }
       // ===================
       // toggle item visibility
       // ===================
       const arrow = currentCategory?.collapsed === true ? "right" : "down";
-      const toggleBtn = $(`<a class="toggle-collapse"><i class="fas fa-caret-${arrow}"></i></a>`).click((ev) => {
+      const toggleBtn = $(
+        `<a class="toggle-collapse"><i class="fas fa-caret-${arrow}"></i></a>`
+      ).click((ev) => {
         ev.preventDefault();
         currentCategory.collapsed = !currentCategory?.collapsed;
         this.saveCategorys();
@@ -550,7 +729,11 @@ export class InventoryPlus {
 
         const headerElement = $(headerTmp.querySelector("h3"));
         const categoryText = headerTmp.querySelector("h3")?.innerText;
-        const categoryId = retrieveCategoryIdFromLabel(this.customCategorys, headerElement, categoryText);
+        const categoryId = retrieveCategoryIdFromLabel(
+          this.customCategorys,
+          headerElement,
+          categoryText
+        );
         const catTypeTmp = categoryId;
         if (categoryId) {
           if (!headerElement.attr("data-categoryid")) {
@@ -558,20 +741,27 @@ export class InventoryPlus {
           }
         }
 
-        const explicitTypesFromList = inventoryPlusItemTypeCollection.filter((t) => {
-          return t.isInventory;
-        });
-        const currentCategoryTmp = duplicateExtended(this.customCategorys[catTypeTmp]);
+        const explicitTypesFromList = inventoryPlusItemTypeCollection.filter(
+          (t) => {
+            return t.isInventory;
+          }
+        );
+        const currentCategoryTmp = duplicateExtended(
+          this.customCategorys[catTypeTmp]
+        );
         currentCategoryTmp.label = i18n(currentCategoryTmp.label);
         currentCategoryTmp.explicitTypes = explicitTypesFromList; // 2022-10-10
-        currentCategoryTmp.enabledBulk = isVariantEncumbranceEnabled && isBulked;
+        currentCategoryTmp.enabledBulk =
+          isVariantEncumbranceEnabled && isBulked;
 
         const template = await renderTemplate(
           `modules/${CONSTANTS.MODULE_NAME}/templates/categoryDialog.hbs`,
           currentCategoryTmp
         );
         const d = new Dialog({
-          title: i18n(`${CONSTANTS.MODULE_NAME}.inv-plus-dialog.editinventorycategory`),
+          title: i18n(
+            `${CONSTANTS.MODULE_NAME}.inv-plus-dialog.editinventorycategory`
+          ),
           content: template,
           buttons: {
             accept: {
@@ -580,7 +770,8 @@ export class InventoryPlus {
               callback: async (html) => {
                 const inputs = html.find("input");
                 for (const input of inputs) {
-                  const value = input.type === "checkbox" ? input.checked : input.value;
+                  const value =
+                    input.type === "checkbox" ? input.checked : input.value;
                   if (input.dataset.dtype === "Number") {
                     const valueN = Number(value) > 0 ? Number(value) : 0;
                     currentCategory[input.name] = valueN;
@@ -589,10 +780,18 @@ export class InventoryPlus {
                   }
                 }
 
-                const currentTypeSelectedS = $(html.find('select[name="explicitTypes"')[0])?.val();
-                if (!currentTypeSelectedS || currentTypeSelectedS.length === 0) {
+                const currentTypeSelectedS = $(
+                  html.find('select[name="explicitTypes"')[0]
+                )?.val();
+                if (
+                  !currentTypeSelectedS ||
+                  currentTypeSelectedS.length === 0
+                ) {
                   currentCategory.explicitTypes = [];
-                } else if (currentTypeSelectedS.length === 1 && !currentTypeSelectedS[0]) {
+                } else if (
+                  currentTypeSelectedS.length === 1 &&
+                  !currentTypeSelectedS[0]
+                ) {
                   const newArr = currentCategory.explicitTypes.map((obj) => {
                     return { ...obj, isSelected: false };
                   });
@@ -691,9 +890,13 @@ export class InventoryPlus {
 
       const isVariantEncumbranceEnabled =
         game.modules.get("variant-encumbrance-dnd5e")?.active &&
-        game.settings.get(CONSTANTS.MODULE_NAME, "enableIntegrationWithVariantEncumbrance");
+        game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "enableIntegrationWithVariantEncumbrance"
+        );
       const isBulked = isVariantEncumbranceEnabled
-        ? isVariantEncumbranceEnabled && game.settings.get("variant-encumbrance-dnd5e", "enableBulkSystem")
+        ? isVariantEncumbranceEnabled &&
+          game.settings.get("variant-encumbrance-dnd5e", "enableBulkSystem")
         : false;
 
       if (currentCategory.ignoreWeight) {
@@ -886,7 +1089,9 @@ export class InventoryPlus {
           }
         }
       }
-      const weightString = $(`<label class="category-weight"> ${icon} ${weightValue}</label>`);
+      const weightString = $(
+        `<label class="category-weight"> ${icon} ${weightValue}</label>`
+      );
       header.find("h3").append(weightString);
     }
   }
@@ -901,7 +1106,13 @@ export class InventoryPlus {
     for (const section of inventory) {
       for (const item of section.items) {
         let sectionItemType = this.getItemType(item);
-        let sectionId = retrieveSectionIdFromItemType(actor.type, sections, item.type, section, sectionItemType);
+        let sectionId = retrieveSectionIdFromItemType(
+          actor.type,
+          sections,
+          item.type,
+          section,
+          sectionItemType
+        );
         /*
 				//let sectionId = retrieveSectionIdFromItemType(actor.type, section, undefined);
 				let sectionId = retrieveSectionIdFromItemType(actor.type, section, type);
@@ -975,30 +1186,46 @@ export class InventoryPlus {
 
     const typesSelected = selectExplicitTypes.val();
     const explicitTypesFromListTmp = [];
-    const explicitTypesFromList = inventoryPlusItemTypeCollection.filter((t) => {
-      const t2 = duplicateExtended(t);
-      if (t2.isInventory && typesSelected.includes(t2.id)) {
-        t2.isSelected = true;
-        explicitTypesFromListTmp.push(t2);
+    const explicitTypesFromList = inventoryPlusItemTypeCollection.filter(
+      (t) => {
+        const t2 = duplicateExtended(t);
+        if (t2.isInventory && typesSelected.includes(t2.id)) {
+          t2.isSelected = true;
+          explicitTypesFromListTmp.push(t2);
+        }
       }
-    });
+    );
 
     newCategory.explicitTypes = explicitTypesFromListTmp;
 
-    if (newCategory.label === undefined || newCategory.label === "" || newCategory.label === null) {
+    if (
+      newCategory.label === undefined ||
+      newCategory.label === "" ||
+      newCategory.label === null
+    ) {
       error(`Could not create the category as no name was specified`, true);
       return;
     }
 
-    const categoryId = retrieveCategoryIdFromLabel(this.customCategorys, undefined, newCategory.label);
+    const categoryId = retrieveCategoryIdFromLabel(
+      this.customCategorys,
+      undefined,
+      newCategory.label
+    );
     if (categoryId) {
-      error(`Could not create the category a category with the same name is already present`, true);
+      error(
+        `Could not create the category a category with the same name is already present`,
+        true
+      );
       return;
     }
 
     const key = this.generateCategoryId();
     if (this.customCategorys[key]) {
-      error(`Could not create the category a category with the same id is already present`, true);
+      error(
+        `Could not create the category a category with the same id is already present`,
+        true
+      );
       return;
     }
 
@@ -1012,7 +1239,11 @@ export class InventoryPlus {
 
   async removeCategory(catType) {
     const changedItems = [];
-    const items = API.getItemsFromCategory(this.actor, catType, this.customCategorys);
+    const items = API.getItemsFromCategory(
+      this.actor,
+      catType,
+      this.customCategorys
+    );
     for (const itemEntity of items) {
       //for (const i of this.actor.items) {
       const type = this.getItemType(itemEntity);
@@ -1031,7 +1262,11 @@ export class InventoryPlus {
 
     delete this.customCategorys[catType];
     const deleteKey = `-=${catType}`;
-    await this.actor.setFlag(CONSTANTS.MODULE_NAME, InventoryPlusFlags.CATEGORYS, { [deleteKey]: null });
+    await this.actor.setFlag(
+      CONSTANTS.MODULE_NAME,
+      InventoryPlusFlags.CATEGORYS,
+      { [deleteKey]: null }
+    );
   }
 
   changeCategoryOrder(movedType, up) {
@@ -1040,9 +1275,16 @@ export class InventoryPlus {
     if (!up) currentSortFlag = 999999999;
     for (const id in this.customCategorys) {
       const currentCategory = this.customCategorys[id];
-      if (!currentCategory.sortFlag || !this.customCategorys[movedType]?.sortFlag) {
+      if (
+        !currentCategory.sortFlag ||
+        !this.customCategorys[movedType]?.sortFlag
+      ) {
         currentCategory.sortFlag = currentSortFlag;
-        setProperty(this.customCategorys[movedType], "sortFlag", currentSortFlag);
+        setProperty(
+          this.customCategorys[movedType],
+          "sortFlag",
+          currentSortFlag
+        );
       }
       if (up) {
         if (
@@ -1081,7 +1323,9 @@ export class InventoryPlus {
 
     const keys = Object.keys(this.customCategorys);
     keys.sort((a, b) => {
-      return this.customCategorys[a]?.sortFlag - this.customCategorys[b]?.sortFlag;
+      return (
+        this.customCategorys[a]?.sortFlag - this.customCategorys[b]?.sortFlag
+      );
     });
     for (const key of keys) {
       sortedCategorys[key] = this.customCategorys[key];
@@ -1126,13 +1370,20 @@ export class InventoryPlus {
     do {
       id = Math.random().toString(36).substring(7);
       iterations--;
-    } while (this.customCategorys[id] !== undefined && iterations > 0 && id.length >= 5);
+    } while (
+      this.customCategorys[id] !== undefined &&
+      iterations > 0 &&
+      id.length >= 5
+    );
 
     return id;
   }
 
   getItemType(item) {
-    let type = getProperty(item, `flags.${CONSTANTS.MODULE_NAME}.${InventoryPlusFlags.CATEGORY}`);
+    let type = getProperty(
+      item,
+      `flags.${CONSTANTS.MODULE_NAME}.${InventoryPlusFlags.CATEGORY}`
+    );
     // if (!type) {
     // 	type = getProperty(item, `flags.${CONSTANTS.MODULE_NAME}.${InventoryPlusFlags.CATEGORY}`);
     // }
@@ -1148,10 +1399,17 @@ export class InventoryPlus {
 
   getCategoryItemWeight(type) {
     let totalCategoryWeight = 0;
-    const items = API.getItemsFromCategory(this.actor, type, this.customCategorys);
+    const items = API.getItemsFromCategory(
+      this.actor,
+      type,
+      this.customCategorys
+    );
     if (
       game.modules.get("variant-encumbrance-dnd5e")?.active &&
-      game.settings.get(CONSTANTS.MODULE_NAME, "enableIntegrationWithVariantEncumbrance")
+      game.settings.get(
+        CONSTANTS.MODULE_NAME,
+        "enableIntegrationWithVariantEncumbrance"
+      )
     ) {
       const encumbranceData = game.modules
         .get("variant-encumbrance-dnd5e")
@@ -1174,8 +1432,15 @@ export class InventoryPlus {
           //@ts-ignore
           const w = itemEntity.system.weight || 0;
           let eqpMultiplyer = 1;
-          if (game.settings.get(CONSTANTS.MODULE_NAME, "enableEquipmentMultiplier")) {
-            eqpMultiplyer = game.settings.get(CONSTANTS.MODULE_NAME, "equipmentMultiplier") || 1;
+          if (
+            game.settings.get(
+              CONSTANTS.MODULE_NAME,
+              "enableEquipmentMultiplier"
+            )
+          ) {
+            eqpMultiplyer =
+              game.settings.get(CONSTANTS.MODULE_NAME, "equipmentMultiplier") ||
+              1;
           }
           if (doNotIncreaseWeightByQuantityForNoAmmunition) {
             //@ts-ignore
@@ -1187,7 +1452,13 @@ export class InventoryPlus {
             //@ts-ignore
             itemEntity.system.equipped ? true : false;
           if (isEquipped) {
-            const itemArmorTypes = ["clothing", "light", "medium", "heavy", "natural"];
+            const itemArmorTypes = [
+              "clothing",
+              "light",
+              "medium",
+              "heavy",
+              "natural",
+            ];
             if (
               doNotApplyWeightForEquippedArmor &&
               //@ts-ignore
@@ -1215,10 +1486,17 @@ export class InventoryPlus {
 
   getCategoryItemBulk(sectionId) {
     // let totalCategoryWeight = 0;
-    const items = API.getItemsFromCategory(this.actor, sectionId, this.customCategorys);
+    const items = API.getItemsFromCategory(
+      this.actor,
+      sectionId,
+      this.customCategorys
+    );
     if (
       game.modules.get("variant-encumbrance-dnd5e")?.active &&
-      game.settings.get(CONSTANTS.MODULE_NAME, "enableIntegrationWithVariantEncumbrance")
+      game.settings.get(
+        CONSTANTS.MODULE_NAME,
+        "enableIntegrationWithVariantEncumbrance"
+      )
     ) {
       // const encumbranceData = <
       // 	EncumbranceBulkData //@ts-ignore
@@ -1228,7 +1506,8 @@ export class InventoryPlus {
         ?.api.calculateBulkOnActorWithItemsNoInventoryPlus(this.actor, items);
 
       const currentCategory = this.customCategorys[sectionId];
-      const totalWeight = encumbranceData.totalWeight + (currentCategory.ownBulk ?? 0);
+      const totalWeight =
+        encumbranceData.totalWeight + (currentCategory.ownBulk ?? 0);
       return totalWeight;
     } else {
       return 0;
@@ -1247,7 +1526,11 @@ export class InventoryPlus {
   // }
 
   async saveCategorys() {
-    await this.actor.setFlag(CONSTANTS.MODULE_NAME, InventoryPlusFlags.CATEGORYS, this.customCategorys);
+    await this.actor.setFlag(
+      CONSTANTS.MODULE_NAME,
+      InventoryPlusFlags.CATEGORYS,
+      this.customCategorys
+    );
   }
 
   /**
@@ -1262,7 +1545,10 @@ export class InventoryPlus {
 
     // Check to make sure the newly created class doesn't take player over level cap
     //@ts-ignore
-    if (type === "class" && this.actor.system.details.level + 1 > CONFIG.DND5E.maxLevel) {
+    if (
+      type === "class" &&
+      this.actor.system.details.level + 1 > CONFIG.DND5E.maxLevel
+    ) {
       return ui.notifications.error(
         game.i18n.format(
           "DND5E.MaxCharacterLevelExceededWarn",
@@ -1292,9 +1578,11 @@ export class InventoryPlus {
       });
       itemTypeTmp = type;
     } else {
-      const defaultType = this.customCategorys[type]?.explicitTypes.filter((i) => {
-        return i.isSelected && i.isInventory;
-      })[0];
+      const defaultType = this.customCategorys[type]?.explicitTypes.filter(
+        (i) => {
+          return i.isSelected && i.isInventory;
+        }
+      )[0];
       if (!defaultType.id) {
         itemTypeTmp = "weapon";
       } else {
@@ -1321,6 +1609,10 @@ export class InventoryPlus {
     const items = await this.actor.createEmbeddedDocuments("Item", [itemData]);
     const dropedItem = items[0];
 
-    await dropedItem.setFlag(CONSTANTS.MODULE_NAME, InventoryPlusFlags.CATEGORY, type);
+    await dropedItem.setFlag(
+      CONSTANTS.MODULE_NAME,
+      InventoryPlusFlags.CATEGORY,
+      type
+    );
   }
 }

@@ -1,6 +1,5 @@
-import API from "../api.js";
+//import API from "../api.js";
 import CONSTANTS from "../constants.js";
-import { Category } from "../inventory-plus-models.js";
 
 // =============================
 // Module Generic function
@@ -21,17 +20,24 @@ export function getOwnedTokens(priorityToControlledIfGM) {
       return canvas.tokens?.placeables;
     }
   }
-  let ownedTokens = canvas.tokens?.placeables.filter((token) => token.isOwner && (!token.document.hidden || gm));
+  let ownedTokens = canvas.tokens?.placeables.filter(
+    (token) => token.isOwner && (!token.document.hidden || gm)
+  );
   if (ownedTokens.length === 0 || !canvas.tokens?.controlled[0]) {
     ownedTokens = canvas.tokens?.placeables.filter(
-      (token) => (token.observer || token.isOwner) && (!token.document.hidden || gm)
+      (token) =>
+        (token.observer || token.isOwner) && (!token.document.hidden || gm)
     );
   }
   return ownedTokens;
 }
 
 export function is_UUID(inId) {
-  return typeof inId === "string" && (inId.match(/\./g) || []).length && !inId.endsWith(".");
+  return (
+    typeof inId === "string" &&
+    (inId.match(/\./g) || []).length &&
+    !inId.endsWith(".")
+  );
 }
 
 export function getUuid(target) {
@@ -146,6 +152,14 @@ export function dialogWarning(message, icon = "fas fa-exclamation-triangle") {
     </p>`;
 }
 
+export function getItemQuantity(item) {
+  return item.system.quantity;
+}
+
+export function getItemWeight(item) {
+  return item.system.weight;
+}
+
 // =========================================================================================
 
 export function cleanUpString(stringToCleanUp) {
@@ -158,7 +172,11 @@ export function cleanUpString(stringToCleanUp) {
   }
 }
 
-export function isStringEquals(stringToCheck1, stringToCheck2, startsWith = false) {
+export function isStringEquals(
+  stringToCheck1,
+  stringToCheck2,
+  startsWith = false
+) {
   if (stringToCheck1 && stringToCheck2) {
     const s1 = cleanUpString(stringToCheck1) ?? "";
     const s2 = cleanUpString(stringToCheck2) ?? "";
@@ -177,6 +195,7 @@ export function isStringEquals(stringToCheck1, stringToCheck2, startsWith = fals
  * i don't know why this methos is a brute force solution for avoid that problem
  */
 export function duplicateExtended(obj) {
+  console.log("Attempting to duplicate", obj);
   try {
     //@ts-ignore
     if (structuredClone) {
@@ -207,7 +226,9 @@ export function mergeByProperty(target, source, prop) {
     const targetElement = target.find((targetElement) => {
       return sourceElement[prop] === targetElement[prop];
     });
-    targetElement ? Object.assign(targetElement, sourceElement) : target.push(sourceElement);
+    targetElement
+      ? Object.assign(targetElement, sourceElement)
+      : target.push(sourceElement);
   }
   return target;
 }
@@ -251,7 +272,9 @@ export function getFirstPlayerToken() {
   if (!token) {
     if (!controlled.length || controlled.length === 0) {
       // If no token is selected use the token of the users character
-      token = canvas.tokens?.placeables.find((token) => token.document.actorId === game.user?.character.id);
+      token = canvas.tokens?.placeables.find(
+        (token) => token.document.actorId === game.user?.character.id
+      );
     }
     // If no token is selected use the first owned token of the users character you found
     if (!token) {
@@ -269,7 +292,11 @@ export function getCSSName(element) {
   //@ts-ignore
   const version = game.system.version.split(".");
   if (element === "sub-header") {
-    if (Number(version[0]) === 0 && Number(version[1]) <= 9 && Number(version[2]) <= 8) {
+    if (
+      Number(version[0]) === 0 &&
+      Number(version[1]) <= 9 &&
+      Number(version[2]) <= 8
+    ) {
       return "inventory-header";
     } else {
       return "items-header";
@@ -278,11 +305,21 @@ export function getCSSName(element) {
   return undefined;
 }
 
-export async function retrieveItemFromData(actor, itemUuid, itemId, itemName, currentCompendium, sourceActorId) {
+export async function retrieveItemFromData(
+  actor,
+  itemUuid,
+  itemId,
+  itemName,
+  currentCompendium,
+  sourceActorId
+) {
   let itemFounded = null;
   if (itemUuid) {
     //@ts-ignore
-    itemFounded = await Item.implementation.fromDropData({ type: "Item", uuid: itemUuid });
+    itemFounded = await Item.implementation.fromDropData({
+      type: "Item",
+      uuid: itemUuid,
+    });
     if (itemFounded) {
       return itemFounded;
     }
@@ -314,7 +351,8 @@ export async function retrieveItemFromData(actor, itemUuid, itemId, itemName, cu
     }
   }
   if (!itemFounded) {
-    itemFounded = game.items?.get(itemId) || actor.items.get(itemId) || undefined;
+    itemFounded =
+      game.items?.get(itemId) || actor.items.get(itemId) || undefined;
   }
   return itemFounded;
 }
@@ -322,7 +360,10 @@ export async function retrieveItemFromData(actor, itemUuid, itemId, itemName, cu
 export function isAlt() {
   // check if Alt and only Alt is being pressed during the drop event.
   const alts = new Set(["Alt", "AltLeft"]);
-  return game.keyboard?.downKeys.size === 1 && game.keyboard.downKeys.intersects(alts);
+  return (
+    game.keyboard?.downKeys.size === 1 &&
+    game.keyboard.downKeys.intersects(alts)
+  );
 }
 
 export function checkCompatible(actorTypeName1, actorTypeName2, item) {
@@ -336,16 +377,29 @@ export function checkCompatible(actorTypeName1, actorTypeName2, item) {
       '".'
   );
 
-  const transferBetweenSameTypeActors = game.settings.get(CONSTANTS.MODULE_NAME, "actorTransferSame");
+  const transferBetweenSameTypeActors = game.settings.get(
+    CONSTANTS.MODULE_NAME,
+    "actorTransferSame"
+  );
   if (transferBetweenSameTypeActors && actorTypeName1 === actorTypeName2) {
     return true;
   }
   try {
-    const transferPairs = JSON.parse("{" + game.settings.get(CONSTANTS.MODULE_NAME, "actorTransferPairs") + "}");
+    const transferPairs = JSON.parse(
+      "{" + game.settings.get(CONSTANTS.MODULE_NAME, "actorTransferPairs") + "}"
+    );
     const withActorTypeName1 = transferPairs[actorTypeName1];
     const withActorTypeName2 = transferPairs[actorTypeName2];
-    if (Array.isArray(withActorTypeName1) && withActorTypeName1.indexOf(actorTypeName2) !== -1) return true;
-    if (Array.isArray(withActorTypeName2) && withActorTypeName2.indexOf(actorTypeName1) !== -1) return true;
+    if (
+      Array.isArray(withActorTypeName1) &&
+      withActorTypeName1.indexOf(actorTypeName2) !== -1
+    )
+      return true;
+    if (
+      Array.isArray(withActorTypeName2) &&
+      withActorTypeName2.indexOf(actorTypeName1) !== -1
+    )
+      return true;
     if (withActorTypeName1 === actorTypeName2) return true;
     if (withActorTypeName2 === actorTypeName1) return true;
   } catch (err) {
@@ -401,20 +455,23 @@ export function transferItem(
       );
       if (potentialStacks.length >= 1) {
         //@ts-ignore
-        const newQuantity = potentialStacks[0].system.quantity + transferedQuantity;
+        const newQuantity =
+          potentialStacks[0].system.quantity + transferedQuantity;
         potentialStacks[0]?.update({ "system.quantity": newQuantity });
         deleteItemIfZero(targetSheet, createdItem.id);
         stacked = true;
       }
     }
 
-    originalItem.update({ "system.quantity": newOriginalQuantity }).then((itemEntity) => {
-      if (itemEntity) {
-        const sh = itemEntity.actor?.sheet;
-        //@ts-ignore
-        deleteItemIfZero(sh, itemEntity.id);
-      }
-    });
+    originalItem
+      .update({ "system.quantity": newOriginalQuantity })
+      .then((itemEntity) => {
+        if (itemEntity) {
+          const sh = itemEntity.actor?.sheet;
+          //@ts-ignore
+          deleteItemIfZero(sh, itemEntity.id);
+        }
+      });
     if (stacked === false) {
       //@ts-ignore
       createdItem.system.quantity = transferedQuantity;
@@ -437,18 +494,33 @@ export function transferCurrency(html, sourceSheet, targetSheet) {
   }
 
   if (errors.length !== 0) {
-    error(i18n(CONSTANTS.MODULE_NAME + ".notEnoughCurrency") + " " + errors.join(", "), true);
+    error(
+      i18n(CONSTANTS.MODULE_NAME + ".notEnoughCurrency") +
+        " " +
+        errors.join(", "),
+      true
+    );
   } else {
     for (const c of currencies) {
       const amount = parseInt(html.find("." + c + " input").val(), 10);
       const key = "system.currency." + c;
-      sourceSheet.actor.update({ [key]: sourceSheet.actor.system.currency[c] - amount });
-      targetSheet.actor.update({ [key]: targetSheet.actor.system.currency[c] + amount }); // key is between [] to force its evaluation
+      sourceSheet.actor.update({
+        [key]: sourceSheet.actor.system.currency[c] - amount,
+      });
+      targetSheet.actor.update({
+        [key]: targetSheet.actor.system.currency[c] + amount,
+      }); // key is between [] to force its evaluation
     }
   }
 }
 
-export function showItemTransferDialog(originalQuantity, sourceSheett, targetSheet, originalItemId, createdItem) {
+export function showItemTransferDialog(
+  originalQuantity,
+  sourceSheett,
+  targetSheet,
+  originalItemId,
+  createdItem
+) {
   const contentDialog = `
   <form class="inventory-plus item">
     <div class="form-group">
@@ -461,7 +533,9 @@ export function showItemTransferDialog(originalQuantity, sourceSheett, targetShe
         >${i18n(CONSTANTS.MODULE_NAME + ".one")}
       </button>
       <button
-        onclick="this.parentElement.querySelector('.transferedQuantity').value = '${Math.round(originalQuantity / 2)}'"
+        onclick="this.parentElement.querySelector('.transferedQuantity').value = '${Math.round(
+          originalQuantity / 2
+        )}'"
         >${i18n(CONSTANTS.MODULE_NAME + ".half")}
       </button>
       <button
@@ -485,7 +559,10 @@ export function showItemTransferDialog(originalQuantity, sourceSheett, targetShe
         //icon: "<i class='fas fa-check'></i>",
         label: i18n(CONSTANTS.MODULE_NAME + ".transfer"),
         callback: (html) => {
-          const transferedQuantity = parseInt(html.find("input.transferedQuantity").val(), 10);
+          const transferedQuantity = parseInt(
+            html.find("input.transferedQuantity").val(),
+            10
+          );
           const stackItems = html.find("input.stack").is(":checked");
           transferItem(
             sourceSheet,
@@ -639,7 +716,10 @@ export function getItemsToSort(actor) {
       let foundSubType = false;
       //@ts-ignore
       // fvtt10
-      if (item.system && (!item.system.activation || item.system.activation.type === "")) {
+      if (
+        item.system &&
+        (!item.system.activation || item.system.activation.type === "")
+      ) {
         // Passive feats
         subtype = 0;
         foundSubType = true;
@@ -711,7 +791,9 @@ export function sortItems(actor) {
       //@ts-ignore
       if (item.sort !== itemSort.sort) {
         //@ts-ignore
-        debug(`item sort mismatch  id = ${item.id}, current = ${item.sort}, new = ${itemSort.sort}`);
+        debug(
+          `item sort mismatch  id = ${item.id}, current = ${item.sort}, new = ${itemSort.sort}`
+        );
         itemUpdates.push(itemSort);
       }
     }
@@ -719,7 +801,9 @@ export function sortItems(actor) {
   if (itemUpdates.length > 0) {
     debug(`Updating sort for items ${itemUpdates}`);
     //@ts-ignore
-    actor.updateEmbeddedDocuments("Item", itemUpdates, { inventorySorterUpdate: true });
+    actor.updateEmbeddedDocuments("Item", itemUpdates, {
+      inventorySorterUpdate: true,
+    });
   }
 }
 
@@ -741,11 +825,19 @@ export function delayedSort(actor) {
 export function calculateEncumbranceWithEquippedMultiplier(actorData) {
   let eqpMultiplyer = 1;
   if (game.settings.get(CONSTANTS.MODULE_NAME, "enableEquipmentMultiplier")) {
-    eqpMultiplyer = game.settings.get(CONSTANTS.MODULE_NAME, "equipmentMultiplier") || 1;
+    eqpMultiplyer =
+      game.settings.get(CONSTANTS.MODULE_NAME, "equipmentMultiplier") || 1;
   }
 
   // Get the total weight from items
-  const physicalItems = ["weapon", "equipment", "consumable", "tool", "backpack", "loot"];
+  const physicalItems = [
+    "weapon",
+    "equipment",
+    "consumable",
+    "tool",
+    "backpack",
+    "loot",
+  ];
   let weight = actorData.items.reduce((weight, i) => {
     if (!physicalItems.includes(i.type)) return weight;
     const q = i.system.quantity || 0;
@@ -755,7 +847,10 @@ export function calculateEncumbranceWithEquippedMultiplier(actorData) {
   }, 0);
 
   // [Optional] add Currency Weight (for non-transformed actors)
-  if (game.settings.get("dnd5e", "currencyWeight") && actorData.system.currency) {
+  if (
+    game.settings.get("dnd5e", "currencyWeight") &&
+    actorData.system.currency
+  ) {
     const currency = actorData.system.currency;
     const numCoins =
       // Object.values(currency).reduce((val, denom) => (val += Math.max(denom, 0)), 0)
@@ -799,14 +894,17 @@ export function calculateEncumbranceWithEquippedMultiplier(actorData) {
   }
 
   const modStr =
-    actorData.system.abilities.str.value && is_real_number(actorData.system.abilities.str.value)
+    actorData.system.abilities.str.value &&
+    is_real_number(actorData.system.abilities.str.value)
       ? actorData.system.abilities.str.value
       : 1;
   const maxValue = modStr * strengthMultiplier * mod;
 
   const max =
     //@ts-ignore
-    maxValue && is_real_number(maxValue) ? maxValue.toNearest(0.1) : actorData.system.attributes.encumbrance.max;
+    maxValue && is_real_number(maxValue)
+      ? maxValue.toNearest(0.1)
+      : actorData.system.attributes.encumbrance.max;
   const pct = Math.clamped((weight * 100) / max, 0, 100);
   return { value: weight, max, pct, encumbered: pct > 200 / 3 };
 }
@@ -821,7 +919,10 @@ export function calcWeightItemCollection(
   doNotApplyWeightForEquippedArmor,
   ignoreCurrency,
   doNotIncreaseWeightByQuantityForNoAmmunition,
-  { ignoreItems, ignoreTypes } = { ignoreItems: undefined, ignoreTypes: undefined }
+  { ignoreItems, ignoreTypes } = {
+    ignoreItems: undefined,
+    ignoreTypes: undefined,
+  }
 ) {
   const isEquipped =
     //@ts-ignore
@@ -833,24 +934,49 @@ export function calcWeightItemCollection(
   // IF IS NOT A BACKPACK
   //@ts-ignore
   if (item.type !== "backpack" || !item.flags.itemcollection) {
-    debug(`calcWeightItemCollection | Is not a 'backpack' and is not flagged as itemcollection`);
-    let currentItemWeight = calcItemWeight(item, ignoreCurrency, doNotIncreaseWeightByQuantityForNoAmmunition);
+    debug(
+      `calcWeightItemCollection | Is not a 'backpack' and is not flagged as itemcollection`
+    );
+    let currentItemWeight = calcItemWeight(
+      item,
+      ignoreCurrency,
+      doNotIncreaseWeightByQuantityForNoAmmunition
+    );
     const itemArmorTypes = ["clothing", "light", "medium", "heavy", "natural"];
     //@ts-ignore
-    if (isEquipped && doNotApplyWeightForEquippedArmor && itemArmorTypes.includes(item.system.armor?.type)) {
+    if (
+      isEquipped &&
+      doNotApplyWeightForEquippedArmor &&
+      itemArmorTypes.includes(item.system.armor?.type)
+    ) {
       debug(
         `calcWeightItemCollection | Is not a 'backpack' and is not flagged as itemcollection | Equipped = true, doNotApplyWeightForEquippedArmor = true, Armor Type = true (${item.system.armor?.type})`
       );
       const applyWeightMultiplierForEquippedArmorClothing =
-        game.settings.get(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorClothing") || 0;
+        game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "applyWeightMultiplierForEquippedArmorClothing"
+        ) || 0;
       const applyWeightMultiplierForEquippedArmorLight =
-        game.settings.get(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorLight") || 0;
+        game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "applyWeightMultiplierForEquippedArmorLight"
+        ) || 0;
       const applyWeightMultiplierForEquippedArmorMedium =
-        game.settings.get(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorMedium") || 0;
+        game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "applyWeightMultiplierForEquippedArmorMedium"
+        ) || 0;
       const applyWeightMultiplierForEquippedArmorHeavy =
-        game.settings.get(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorHeavy") || 0;
+        game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "applyWeightMultiplierForEquippedArmorHeavy"
+        ) || 0;
       const applyWeightMultiplierForEquippedArmorNatural =
-        game.settings.get(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedArmorNatural") || 0;
+        game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "applyWeightMultiplierForEquippedArmorNatural"
+        ) || 0;
       //@ts-ignore
       if (item.system.armor?.type === "clothing") {
         debug(
@@ -907,25 +1033,37 @@ export function calcWeightItemCollection(
       if (isProficient) {
         debug(
           `calcWeightItemCollection | Equipped = true, Proficient = true : ${currentItemWeight} => ${
-            currentItemWeight * game.settings.get(CONSTANTS.MODULE_NAME, "profEquippedMultiplier")
+            currentItemWeight *
+            game.settings.get(CONSTANTS.MODULE_NAME, "profEquippedMultiplier")
           }`
         );
-        currentItemWeight *= game.settings.get(CONSTANTS.MODULE_NAME, "profEquippedMultiplier");
+        currentItemWeight *= game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "profEquippedMultiplier"
+        );
       } else {
         debug(
           `calcWeightItemCollection | Equipped = false, Proficient = false : ${currentItemWeight} => ${
-            currentItemWeight * game.settings.get(CONSTANTS.MODULE_NAME, "equippedMultiplier")
+            currentItemWeight *
+            game.settings.get(CONSTANTS.MODULE_NAME, "equippedMultiplier")
           }`
         );
-        currentItemWeight *= game.settings.get(CONSTANTS.MODULE_NAME, "equippedMultiplier");
+        currentItemWeight *= game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "equippedMultiplier"
+        );
       }
     } else {
       debug(
         `calcWeightItemCollection | Equipped = false, Proficient = false : ${currentItemWeight} => ${
-          currentItemWeight * game.settings.get(CONSTANTS.MODULE_NAME, "unequippedMultiplier")
+          currentItemWeight *
+          game.settings.get(CONSTANTS.MODULE_NAME, "unequippedMultiplier")
         }`
       );
-      currentItemWeight *= game.settings.get(CONSTANTS.MODULE_NAME, "unequippedMultiplier");
+      currentItemWeight *= game.settings.get(
+        CONSTANTS.MODULE_NAME,
+        "unequippedMultiplier"
+      );
     }
     return currentItemWeight;
   }
@@ -944,7 +1082,11 @@ export function calcWeightItemCollection(
   // if (weightless) return getProperty(this, "flags.itemcollection.bagWeight") ?? 0;
   let itemWeight = getItemWeight(item) || 0;
   //@ts-ignore
-  if (useEquippedUnequippedItemCollectionFeature && !isEquipped && item.flags?.itemcollection?.weightlessUnequipped) {
+  if (
+    useEquippedUnequippedItemCollectionFeature &&
+    !isEquipped &&
+    item.flags?.itemcollection?.weightlessUnequipped
+  ) {
     return 0;
   }
   // END MOD 4535992
@@ -953,25 +1095,41 @@ export function calcWeightItemCollection(
     itemWeight = getProperty(item, "flags.itemcollection.bagWeight") ?? 0;
   } else {
     itemWeight =
-      calcItemWeight(item, ignoreCurrency, doNotIncreaseWeightByQuantityForNoAmmunition, { ignoreItems, ignoreTypes }) +
-      (getProperty(item, "flags.itemcollection.bagWeight") ?? 0);
+      calcItemWeight(
+        item,
+        ignoreCurrency,
+        doNotIncreaseWeightByQuantityForNoAmmunition,
+        { ignoreItems, ignoreTypes }
+      ) + (getProperty(item, "flags.itemcollection.bagWeight") ?? 0);
   }
   if (isEquipped) {
     if (isProficient) {
-      itemWeight *= game.settings.get(CONSTANTS.MODULE_NAME, "profEquippedMultiplier");
+      itemWeight *= game.settings.get(
+        CONSTANTS.MODULE_NAME,
+        "profEquippedMultiplier"
+      );
     } else {
       const applyWeightMultiplierForEquippedContainer =
         item.type === "backpack"
-          ? game.settings.get(CONSTANTS.MODULE_NAME, "applyWeightMultiplierForEquippedContainer") || -1
+          ? game.settings.get(
+              CONSTANTS.MODULE_NAME,
+              "applyWeightMultiplierForEquippedContainer"
+            ) || -1
           : -1;
       if (applyWeightMultiplierForEquippedContainer > -1) {
         itemWeight *= applyWeightMultiplierForEquippedContainer;
       } else {
-        itemWeight *= game.settings.get(CONSTANTS.MODULE_NAME, "equippedMultiplier");
+        itemWeight *= game.settings.get(
+          CONSTANTS.MODULE_NAME,
+          "equippedMultiplier"
+        );
       }
     }
   } else {
-    itemWeight *= game.settings.get(CONSTANTS.MODULE_NAME, "unequippedMultiplier");
+    itemWeight *= game.settings.get(
+      CONSTANTS.MODULE_NAME,
+      "unequippedMultiplier"
+    );
   }
   return itemWeight;
 }
@@ -980,7 +1138,10 @@ function calcItemWeight(
   item,
   ignoreCurrency,
   doNotIncreaseWeightByQuantityForNoAmmunition,
-  { ignoreItems, ignoreTypes } = { ignoreItems: undefined, ignoreTypes: undefined }
+  { ignoreItems, ignoreTypes } = {
+    ignoreItems: undefined,
+    ignoreTypes: undefined,
+  }
 ) {
   //@ts-ignore
   if (item.type !== "backpack" || item.items === undefined) {
@@ -1008,7 +1169,10 @@ function calcItemWeight(
     debug(`calcItemWeight | Check out currency = true => ${weight}`);
     //@ts-ignore
     const currency = item.system.currency ?? {};
-    const numCoins = Object.values(currency).reduce((val, denom) => (val += Math.max(denom, 0)), 0);
+    const numCoins = Object.values(currency).reduce(
+      (val, denom) => (val += Math.max(denom, 0)),
+      0
+    );
 
     const currencyPerWeight = game.settings.get("dnd5e", "metricWeightUnits")
       ? game.settings.get(CONSTANTS.MODULE_NAME, "fakeMetricSystem")
@@ -1030,10 +1194,16 @@ function calcItemWeight(
     debug(`calcItemWeight | Check out currency = false => ${weight}`);
     //@ts-ignore
     const currency = item.system.currency ?? {};
-    const numCoins = currency ? Object.keys(currency).reduce((val, denom) => val + currency[denom], 0) : 0;
+    const numCoins = currency
+      ? Object.keys(currency).reduce((val, denom) => val + currency[denom], 0)
+      : 0;
     weight = weight + numCoins / 50;
     weight = Math.round(weight * 100000) / 100000;
-    debug(`calcItemWeight | Backpack : ${numCoins} / ${50} = ${numCoins / 50} => ${weight}`);
+    debug(
+      `calcItemWeight | Backpack : ${numCoins} / ${50} = ${
+        numCoins / 50
+      } => ${weight}`
+    );
   }
   return weight;
 }
@@ -1076,7 +1246,9 @@ export async function _isFromSameActor(actor, item) {
     const itemRetrieve = await Item.implementation.fromDropData(item);
     //@ts-ignore
     const actorRetrieve = item.actor ? item.actor : itemRetrieve.parent;
-    return actor.id === actorRetrieve?.uuid || actor.uuid === actorRetrieve?.uuid;
+    return (
+      actor.id === actorRetrieve?.uuid || actor.uuid === actorRetrieve?.uuid
+    );
   }
 }
 
@@ -1089,7 +1261,9 @@ export function retrieveSectionIdFromItemType(
   // categoryDatasetType
 ) {
   let sectionId = undefined;
-  let sectionItemType = sectionItemTypeOri ? sectionItemTypeOri : originalItemType;
+  let sectionItemType = sectionItemTypeOri
+    ? sectionItemTypeOri
+    : originalItemType;
   let activationType = "";
   let weaponType = "";
   let armorType = "";
@@ -1136,7 +1310,10 @@ export function retrieveSectionIdFromItemType(
         break;
       }
     }
-  } else if (actorType === "npc" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")) {
+  } else if (
+    actorType === "npc" &&
+    game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")
+  ) {
     switch (sectionItemType) {
       case "feat": {
         if (activationType === "action") {
@@ -1179,7 +1356,10 @@ export function retrieveSectionIdFromItemType(
         break;
       }
     }
-  } else if (actorType === "vehicle" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")) {
+  } else if (
+    actorType === "vehicle" &&
+    game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")
+  ) {
     switch (sectionItemType) {
       case "feat": {
         if (activationType === "crew") {
@@ -1230,7 +1410,12 @@ export function retrieveSectionIdFromItemType(
     }
   } else {
     // Cannot happened
-    debug(i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.actortypeisnotsupported`, { actorType: actorType }));
+    debug(
+      i18nFormat(
+        `${CONSTANTS.MODULE_NAME}.dialogs.warn.actortypeisnotsupported`,
+        { actorType: actorType }
+      )
+    );
     sectionId = undefined;
   }
   if (sectionId === undefined) {
@@ -1241,16 +1426,25 @@ export function retrieveSectionIdFromItemType(
     } else {
       if (actorType === "character") {
         sectionId = "weapon";
-      } else if (actorType === "npc" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")) {
+      } else if (
+        actorType === "npc" &&
+        game.settings.get(CONSTANTS.MODULE_NAME, "enableForNpc")
+      ) {
         sectionId = "weapons";
-      } else if (actorType === "vehicle" && game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")) {
+      } else if (
+        actorType === "vehicle" &&
+        game.settings.get(CONSTANTS.MODULE_NAME, "enableForVehicle")
+      ) {
         sectionId = "weapons";
       } else {
         // Cannot happened
         debug(
-          i18nFormat(`${CONSTANTS.MODULE_NAME}.dialogs.warn.actortypeisnotsupported`, {
-            actorType: actorType,
-          })
+          i18nFormat(
+            `${CONSTANTS.MODULE_NAME}.dialogs.warn.actortypeisnotsupported`,
+            {
+              actorType: actorType,
+            }
+          )
         );
       }
     }
@@ -1266,7 +1460,7 @@ export function retrieveCategoryIdFromLabel(sections, element, categoryText) {
   let categoryTextTmp = "";
   if (element) {
     let headerElement = element;
-    if (!headerElement.attr("data-categoryid")) {
+    if (headerElement.attr("data-categoryid")) {
       dataCategoryId = headerElement.attr("data-categoryid");
     }
   }
